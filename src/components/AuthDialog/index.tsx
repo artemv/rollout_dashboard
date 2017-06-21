@@ -1,59 +1,56 @@
 import * as React from 'react';
 import Dialog from 'material-ui/Dialog';
+import TextField from 'material-ui/TextField';
 import './Auth-Dialog.scss';
 
 interface AuthDialogProps {
     saveAuthenticationData: (idToken: string, username: string, mail: string) => void;
 }
 
-declare const GOOGLE_AUTH_CLIENT_ID: string;
-declare const GOOGLE_AUTH_API_KEY: string;
+const TOKEN_STORAGE_KEY = 'rolloutToken';
 
-class AuthDialog extends React.Component<AuthDialogProps, {}> {
+interface AuthState {
+    token?: string;
+}
 
-    public GoogleAuth: any;
+class AuthDialog extends React.Component<AuthDialogProps, AuthState> {
 
-    public componentDidMount() {
-        (window as any).gapi.load('client', this.initClient.bind(this));
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            token: window.localStorage.getItem(TOKEN_STORAGE_KEY)
+        };
     }
 
     public render() {
         return (
             <Dialog className="auth-dialog" modal={true} open={true}>
                 <p> Please authenticate yourself before continuing further </p>
+                <TextField
+                    className="field"
+                    name="token"
+                    value={this.state.token}
+                    floatingLabelText="Token:"
+                    floatingLabelFixed={true}
+                    onChange={ (_, value) => {
+                      this.updateToken(value);
+                  }}/>
                 <a href="#!" ref="login" className="btn-login" onClick={this.connect.bind(this)}>
-                    <i className="google"> </i>
-                    Continue with Google
+                    Submit
                 </a>
             </Dialog>);
     }
 
-    private initClient() {
-         (window as any).gapi.client.init({
-            apiKey: GOOGLE_AUTH_API_KEY,
-            clientId: GOOGLE_AUTH_CLIENT_ID,
-            scope: 'email profile',
-        }).then(() => {
-            this.GoogleAuth =  (window as any).gapi.auth2.getAuthInstance();
-            this.GoogleAuth.isSignedIn.listen(this.statusChanged.bind(this));
-            this.connect();
-        });
+    private updateToken(value) {
+        this.setState({token: value});
     }
 
-  private connect() {
-      if (this.GoogleAuth.isSignedIn.get()) {
-          this.statusChanged();
-      } else {
-          this.GoogleAuth.signIn();
-      }
-  }
-  private statusChanged() {
-      const user = this.GoogleAuth.currentUser.get();
-      const authResponse = user.getAuthResponse();
-      const basicProfile = user.getBasicProfile();
+    private connect() {
+        const token = this.state.token;
+        window.localStorage.setItem(TOKEN_STORAGE_KEY, token);
+        this.props.saveAuthenticationData(token, 'admin', 'nomatter@example.com');
+    }
 
-      this.props.saveAuthenticationData(authResponse.id_token, basicProfile.getName(), basicProfile.getEmail());
-  }
 }
 
 export default AuthDialog;
