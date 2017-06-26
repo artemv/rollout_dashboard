@@ -32,6 +32,7 @@ class AuthDialog extends React.Component<AuthDialogProps, AuthState> {
                     value={this.state.token}
                     floatingLabelText="Token:"
                     floatingLabelFixed={true}
+                    type="password"
                     onChange={ (_, value) => {
                       this.updateToken(value);
                   }}/>
