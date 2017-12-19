@@ -37,9 +37,10 @@ On page load, we're fetching from [Rollout-Service](https://github.com/fiverr/ro
 
 ## How to run it?
 Run `cp .env.example .env` and then set right values there. You can also pass those values as env vars instead. 
-Start it by running `npm run start:dev`
 Here $SERVICE_HOST and $SERVICE_PORT vars point to [Rollout-Service](https://github.com/fiverr/rollout_service) service 
 instance, and $PORT specifies the dashboard UI listening port.
+
+Start it by running `npm run start:dev`
 
 ## What's the 'history' field?
 
@@ -51,9 +52,15 @@ This feature is already supported!
 
 You can easily do that by editing the `config` file in [Rollout-Service](https://github.com/fiverr/rollout_service)
 
+## How do I restrict the google authentication to specific users list.
+
+You can do that by specifying the ALLOWED_USERS_EMAILS env var in [Rollout-Service](https://github.com/fiverr/rollout_service)
+
 ## Where do I get google auth credentials?
 
 You can generate the credentials at [google console](https://console.cloud.google.com/).
+
+Then set the GAPI_CLIENT_ID in ENV var, or in the .env file for development. 
 
 ## I want to use Rollout-Dashboard without google auth, is it supported?
 
